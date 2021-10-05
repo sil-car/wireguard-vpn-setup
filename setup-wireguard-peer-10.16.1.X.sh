@@ -30,11 +30,13 @@ fi
 
 # Set global variables.
 PUBLIC_IP4="165.22.82.201"
-LISTEN_PORT="21121"
 IP4="10.16.1.${ID}"
-IP6="fded:f4ce:74ba:f54a::${ID}"
+IP6_108="fded:f4ce:74ba:f54a::"
+IP6="${IP6_108}${ID}"
 SN4='32'    # IPv4 subnet
 SN6='128'   # IPv6 subnet
+CLIENT_IFACE='wgcar0'
+LISTEN_PORT="21168"
 
 
 echo "This script will install and configure this system as a wireguard peer, $IP4,
@@ -102,11 +104,10 @@ echo "$privatekey" | tee "$privatekey_file" | wg pubkey > "$publickey_file"
 
 
 # Interface
-client_iface='wgcar0'
 client_ipv4="${IP4}/${SN4}"
 client_ipv6="${IP6}/${SN6}"
 client_port="$LISTEN_PORT"
-cat > "${wg_dir}/${client_iface}.conf" << MULTILINE
+cat > "${wg_dir}/${CLIENT_IFACE}.conf" << MULTILINE
 [Interface]
 Address = ${client_ipv4}, ${client_ipv6}
 PrivateKey = $privatekey
@@ -114,7 +115,7 @@ PrivateKey = $privatekey
 MULTILINE
 
 # Peer
-cat >> "${wg_dir}/${client_iface}.conf" << MULTILINE
+cat >> "${wg_dir}/${CLIENT_IFACE}.conf" << MULTILINE
 [Peer]
 # DO-VPS
 PublicKey = v+wQwcIwZKAgNC6P8SDLuHP6Fxm7DeIVZFPl8cSVbWU=
@@ -127,13 +128,13 @@ MULTILINE
 # ------------------------------------------------------------------------------
 # Start and confirm the service.
 # ------------------------------------------------------------------------------
-svc_name="wg-quick@${client_iface}.service"
+svc_name="wg-quick@${CLIENT_IFACE}.service"
 systemctl enable --now "$svc_name"
 
 # Confirm wireguard configuration.
 echo "Confirming the wireguard configuration..."
 # ping -c3 "$serv_ipv4_priv" >/dev/null 2>&1
-iface_status=$(ip -br a | grep "$client_iface")
+iface_status=$(ip -br a | grep "$CLIENT_IFACE")
 # ping_ret=$?
 if [[ -z $iface_status ]]; then
     echo "Error: The wireguard service $svc_name did not start properly."
