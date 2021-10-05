@@ -110,9 +110,9 @@ MULTILINE
 
 # Peers
 peers=(
-    "# Nate-XPS|AO2i+0Dn61wOeOB0TcsgVbuH7nv4sdVe8OXiKa50Oy8=|10.168.220.2/32, ${IP6_108}::2/128"
-    "# marti-printer|aw0dGjMjJ44uQpAGEM0x9zf5FW3X+lrPFugrPHAn4k8=|10.168.220.3/32, ${IP6_108}::3/128"
-    "# moto6e|ELEKPlmiabwd+u9o8x9rh9KGDVlTzfxzB5HFWmBTOBg=|10.16.1.31/32, ${IP6_108}::31/128"
+    "# Nate-XPS|AO2i+0Dn61wOeOB0TcsgVbuH7nv4sdVe8OXiKa50Oy8=|10.168.220.2/32, ${IP6_108}2/128"
+    "# marti-printer|aw0dGjMjJ44uQpAGEM0x9zf5FW3X+lrPFugrPHAn4k8=|10.168.220.3/32, ${IP6_108}3/128"
+    "# moto6e|ELEKPlmiabwd+u9o8x9rh9KGDVlTzfxzB5HFWmBTOBg=|10.16.1.31/32, ${IP6_108}31/128"
 )
 for p in "${peers[@]}"; do
     name=$(echo $p | cut -d'|' -f1)
