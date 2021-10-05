@@ -21,9 +21,12 @@ fi
 # Set global variables
 ID='1'
 IP4="10.16.1.${ID}"
-IP6="fded:f4ce:74ba:f54a::${ID}"
+IP6_108="fded:f4ce:74ba:f54b::"
+IP6="${IP6_108}${ID}"
 SN4='24'
 SN6='64'
+CLIENT_IFACE='wgcar0'
+CLIENT_PORT='21121'
 
 
 echo "This script will install and configure this system as a wireguard gateway, $IP4."
@@ -80,7 +83,7 @@ echo "$privatekey" | tee "$privatekey_file" | wg pubkey > "$publickey_file"
 # [Interface]
 # Address = 10.16.1.1/24,fded:f4ce:74ba:f54a::1/64
 # PrivateKey = <PrivateKey>
-# ListenPort = 51820
+# ListenPort = 21121
 #
 # [Peer]
 # # Nate-XPS
@@ -99,30 +102,28 @@ echo "$privatekey" | tee "$privatekey_file" | wg pubkey > "$publickey_file"
 
 
 # Interface
-client_iface='wgcar0'
 client_ipv4="${IP4}/${SN4}"
 client_ipv6="${IP6}/${SN6}"
-client_port='21121'
-cat > "${wg_dir}/${client_iface}.conf" << MULTILINE
+cat > "${wg_dir}/${CLIENT_IFACE}.conf" << MULTILINE
 [Interface]
 Address = ${client_ipv4}, ${client_ipv6}
 PrivateKey = $privatekey
-ListenPort = $client_port
+ListenPort = $CLIENT_PORT
 
 MULTILINE
 
 # Peers
 peers=(
-    "# Nate-XPS|AO2i+0Dn61wOeOB0TcsgVbuH7nv4sdVe8OXiKa50Oy8=|10.16.1.2/32, fded:f4ce:74ba:f54a::2/128"
-    "# servacatba|R7nL0In+a90NtRroii3JeYlXj3xwEnXyJ621DmSTtlo=|10.16.1.4/32, fded:f4ce:74ba:f54a::4/128"
-    "# moto6e|ELEKPlmiabwd+u9o8x9rh9KGDVlTzfxzB5HFWmBTOBg=|10.16.1.31/32, fded:f4ce:74ba:f54a::31/128"
+    "# Nate-XPS|AO2i+0Dn61wOeOB0TcsgVbuH7nv4sdVe8OXiKa50Oy8=|10.16.1.2/32, ${IP6_108}2/128"
+    "# servacatba|R7nL0In+a90NtRroii3JeYlXj3xwEnXyJ621DmSTtlo=|10.16.1.4/32, ${IP6_108}4/128"
+    "# moto6e|ELEKPlmiabwd+u9o8x9rh9KGDVlTzfxzB5HFWmBTOBg=|10.16.1.31/32, ${IP6_108}31/128"
 )
 for p in "${peers[@]}"; do
     name=$(echo $p | cut -d'|' -f1)
     address=$(echo $p | cut -d'|' -f3)
     publickey=$(echo $p | cut -d'|' -f2)
 
-cat >> "${wg_dir}/${client_iface}.conf" << MULTILINE
+cat >> "${wg_dir}/${CLIENT_IFACE}.conf" << MULTILINE
 [Peer]
 $name
 AllowedIPs = $address
@@ -134,13 +135,13 @@ done
 # ------------------------------------------------------------------------------
 # Start and confirm the service.
 # ------------------------------------------------------------------------------
-svc_name="wg-quick@${client_iface}.service"
+svc_name="wg-quick@${CLIENT_IFACE}.service"
 systemctl enable --now "$svc_name"
 
 # Confirm wireguard configuration.
 echo "Confirming the wireguard configuration..."
 # ping -c3 "$serv_ipv4_priv" >/dev/null 2>&1
-iface_status=$(ip -br a | grep "$client_iface")
+iface_status=$(ip -br a | grep "$CLIENT_IFACE")
 # ping_ret=$?
 if [[ -z $iface_status ]]; then
     echo "Error: The wireguard service $svc_name did not start properly."
