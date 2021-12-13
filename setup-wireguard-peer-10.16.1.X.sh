@@ -36,7 +36,7 @@ IP6="${IP6_108}${ID}"
 SN4='32'    # IPv4 subnet
 SN6='128'   # IPv6 subnet
 CLIENT_IFACE='wgcar0'
-LISTEN_PORT="21168"
+LISTEN_PORT="21121"
 
 
 echo "This script will install and configure this system as a wireguard peer, $IP4,
