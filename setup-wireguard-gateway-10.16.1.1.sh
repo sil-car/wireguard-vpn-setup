@@ -117,6 +117,7 @@ peers=(
     "# Nate-XPS|AO2i+0Dn61wOeOB0TcsgVbuH7nv4sdVe8OXiKa50Oy8=|10.16.1.2/32, ${IP6_108}2/128"
     "# servacatba|R7nL0In+a90NtRroii3JeYlXj3xwEnXyJ621DmSTtlo=|10.16.1.4/32, ${IP6_108}4/128"
     "# moto6e|ELEKPlmiabwd+u9o8x9rh9KGDVlTzfxzB5HFWmBTOBg=|10.16.1.31/32, ${IP6_108}31/128"
+    "# ACATBA-pfSense|q1NVA3FfGgTIZsKdl6JKGJ0kfFCrBo1ULlZyw/sYJgs=|10.16.1.254, ${IP6_108}254/128"
 )
 for p in "${peers[@]}"; do
     name=$(echo $p | cut -d'|' -f1)
