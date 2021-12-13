@@ -21,7 +21,7 @@ fi
 # Set global variables
 ID='1'
 IP4="10.16.1.${ID}"
-IP6_108="fded:f4ce:74ba:f54b::"
+IP6_108="fded:f4ce:74ba:f54a::"
 IP6="${IP6_108}${ID}"
 SN4='24'
 SN6='64'
